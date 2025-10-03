@@ -2,12 +2,10 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class ProjectsManager {
     private int nextProjectId;
-    private ArrayList<Project> projects;
-    //private Random rand = new Random();
+    private final ArrayList<Project> projects;
 
     public ProjectsManager(){
         projects = new ArrayList<>();
@@ -16,13 +14,12 @@ public class ProjectsManager {
     public void setProjects(ArrayList<Project> incomingProjects) {
         projects.clear();
         projects.addAll(incomingProjects);
-        nextProjectId = projects.getLast().getId()+1;//CHECKA ESTO xd
+        nextProjectId = getHighestId()+1;
     }
 
-    public Project addProject(String title, String description)throws TitleNotUniqueException{
+    public Project addProject(String title, String description) throws TitleNotUniqueException{
 
-        if(!isTitleUnique(description)) throw new TitleNotUniqueException("Not unique title") ;
-        //int id = rand.nextInt(999)+100;
+        if(!isTitleUnique(title)) throw new TitleNotUniqueException("Not unique title") ;
         projects.add(new Project(title, description, nextProjectId));
         nextProjectId++;
         return projects.getLast();
@@ -51,15 +48,18 @@ public class ProjectsManager {
         return null;
     }
     public ArrayList<Project> findProjects(String titleStr){
+        ArrayList<Project> result = new ArrayList<>();
         for(Project project:projects){
-            project.equals(project);
+            if(project.getTitle().equals(titleStr)){
+                result.add(project);
+            }
         }
-        return projects;
+        return result;
     }
 
 
     private int getHighestId(){
-        return nextProjectId-1;
+        return projects.getLast().getId();
     }
 
     @Override

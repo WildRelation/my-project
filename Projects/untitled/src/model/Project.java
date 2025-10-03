@@ -1,32 +1,32 @@
 package model;
 
 import model.matcher.ITaskMatcher;
+import model.matcher.PrioMatcher;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 public class Project implements Comparable<Project>, Serializable {
     private String title;
     private final int id;
-    private String description;
+    private final String description;
     private final LocalDate created;
-    private int nextTaskId = 0;
-    private ArrayList<Task> tasks;
-    //private Random rand = new Random();
+    private int nextTaskId;
+    private final ArrayList<Task> tasks;
 
-    public Project(String title, String description, int id){
+    Project(String title, String description, int id){
         this.title = title;
         this.description = description;
         this.id = id;
+        nextTaskId = 0;
         tasks = new ArrayList<>();
         created = LocalDate.now();
     }
 
     public Task addTask(String description, Prio prio){
-        //int id = rand.nextInt(999)+100;
         Task newTask = new Task(description, prio, nextTaskId);
         tasks.add(newTask);
         nextTaskId++;
@@ -35,6 +35,7 @@ public class Project implements Comparable<Project>, Serializable {
 
     public ArrayList<Task> findTasks(ITaskMatcher matcher){
         ArrayList<Task> result = new ArrayList<>();
+
         for(Task task : tasks){
             if(matcher.match(task)){
                 result.add(task);
@@ -42,6 +43,8 @@ public class Project implements Comparable<Project>, Serializable {
         }
         return result;
     }
+
+    //ArrayList<Task> prioResult = findTasks(new PrioMatcher(Prio.High));
 
     public String getTitle() {
         return title;
@@ -67,12 +70,18 @@ public class Project implements Comparable<Project>, Serializable {
     }
 
     public LocalDate getLastUpdated(){
+        //fråga anders
+        for(Task task: tasks){
+            task.getLastUpdate();
+        }
         return created;
     }
 
     public Task getTaskById(int id){
-        Task mytask = new Task("jio", Prio.High, 83);
-        return mytask;
+        for(Task task: tasks){
+            if(task.getId()==id) return task;
+        }
+        return null;
     }
 
     public int getNextTaskId() {
@@ -80,6 +89,8 @@ public class Project implements Comparable<Project>, Serializable {
     }
 
     @Override
+
+    //fråga lärare
     public int compareTo(Project project){
         return this.title.compareTo(project.title);
     }

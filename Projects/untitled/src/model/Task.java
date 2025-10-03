@@ -11,7 +11,7 @@ public class Task implements Comparable<Task>, Serializable{
     private LocalDate lastUpdate;
     private Prio prio;
 
-    public Task(String description, Prio prio, int id){
+    Task(String description, Prio prio, int id){
         this.description = description;
         this.prio = prio;
         this.id = id;
@@ -20,20 +20,27 @@ public class Task implements Comparable<Task>, Serializable{
     }
 
     public void setTakenBy(String takenBy) {
-        if(this.takenBy!=null) throw new IllegalStateException("Task taken already by another person");
+        if(this.takenBy!=null) throw new IllegalStateException("This task taken by another person already");
         this.takenBy = takenBy;
+        setLastUpdate();
     }
 
-    public void setLastUpdate(int hr){
+    public LocalDate getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(){
         this.lastUpdate = LocalDate.now();
     }
 
     public void setState(TaskState state) {
         this.state = state;
+        setLastUpdate();
     }
 
     public void setPrio(Prio prio) {
         this.prio = prio;
+        setLastUpdate();
     }
 
     public String getTakenBy() {
@@ -49,11 +56,15 @@ public class Task implements Comparable<Task>, Serializable{
         //First key, prio
         int result = this.prio.compareTo(task.prio);
         if (result==0){
-            System.out.println("same prio");
             // second key, description
             result = this.description.compareTo(task.description);
         }
         return result;
+    }
+
+
+    public int getId() {
+        return id;
     }
 
     public TaskState getState() {
